@@ -1,0 +1,21 @@
+{
+  "name": "allex_serviceneedservice",
+  "version": "0.1.0",
+  "description": "ServiceNeedService",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@gitlab.hers.rs:allex_services/serviceneed.git"
+  },
+  "keywords": [
+    "ecosystem:allex",
+    "Service",
+    "ServiceNeed"
+  ],
+  "author": "HERS Belgrade",
+  "license": "ISC"
+}
+
