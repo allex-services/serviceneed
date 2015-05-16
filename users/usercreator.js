@@ -14,6 +14,12 @@ function createUser(execlib,ParentUser){
   User.prototype.canAcceptMoreBids = function(){
     return this.__service.bids.count<1;
   };
+  User.prototype.produceChallenge = function(offering,bidticket,defer){
+    defer.resolve({timeout:60});
+  };
+  User.prototype.checkChallengeResponse = function(bidticket,challenge,response,defer){
+    defer.resolve(null);//no complaints
+  };
 
   return User;
 }
