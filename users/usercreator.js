@@ -47,7 +47,6 @@ function createUser(execlib,ParentUser){
     lib.traverse(runningservicerecord,setter.bind(null,this.__service.state));
     this.__service.state.set('ipaddress',this.get('name'));
     console.log(this.get('name'),this.role,'registerRunning',runningservicerecord,this.pendingDefer ? 'with' : 'without', 'pendingDefer');
-    this.__service.state.data.dumpToConsole();
     defer.resolve('ok');
     if(this.pendingDefer){
       this.pendingDefer.resolve('ok');

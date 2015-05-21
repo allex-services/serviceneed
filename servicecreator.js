@@ -15,6 +15,7 @@ function createServiceNeedService(execlib,ParentServicePack){
   ServiceNeedService.prototype.__cleanUp = function(){
     ParentService.prototype.__cleanUp.call(this);
   };
+  ServiceNeedService.prototype.needFields = ['ipaddress','tcpport','httpport','wsport'];
   
   return ServiceNeedService;
 }
