@@ -1,5 +1,19 @@
 function createUser(execlib,ParentUser){
-  var lib = execlib.lib;
+  var lib = execlib.lib,
+      q = lib.q;
+
+  function testPort(ipaddress,port){
+    var d = q.defer();
+    if(!(ipaddress&&port)){
+      d.reject('no can do');
+    }else{
+      var c = new require('net').Socket();
+      console.log('testing',ipaddress,':',port);
+      c.on('error',d.reject.bind(d));
+      c.connect(port,ipaddress,d.resolve.bind(d,port));
+    }
+    return d.promise;
+  }
 
   if(!ParentUser){
     ParentUser = execlib.execSuite.ServicePack.Service.prototype.userFactory.get('user');
@@ -7,19 +21,12 @@ function createUser(execlib,ParentUser){
 
   function User(prophash){
     ParentUser.call(this,prophash);
-    this.pendingDefer = null;
-    this.satisfied = false;
   }
   ParentUser.inherit(User,require('../methoddescriptors/user'));
   function rejector(defer){
     defer.reject(new lib.Error('ALREADY_SATISFIED'));
   }
   User.prototype.__cleanUp = function(){
-    this.satisfied = null;
-    if(this.pendingDefer){
-      this.pendingDefer.resolve('ok');
-    }
-    this.pendingDefer = null;
     ParentUser.prototype.__cleanUp.call(this);
   };
   User.prototype.canAcceptMoreBids = function(){
@@ -28,31 +35,30 @@ function createUser(execlib,ParentUser){
   User.prototype.produceChallenge = function(offering,bidticket,defer){
     defer.resolve({timeout:60});
   };
-  User.prototype.checkChallengeResponse = function(bidticket,challenge,response,defer){
-    console.log(this.get('name'),'checkChallengeResponse','pendingDefer',this.pendingDefer,'satisfied',this.satisfied);
-    if(this.pendingDefer){
-      defer.reject(new lib.Error('ALREADY_HAVE_PENDING_RESPONSE'));
-      return;
-    }
-    if(this.satisfied){
-      defer.resolve('ok');
-    }else{
-      this.pendingDefer = defer;
-    }
-  };
   function setter(u,item,itemname){
     u.set(itemname,item);
   }
-  User.prototype.registerRunning = function(runningservicerecord,defer){
-    lib.traverse(runningservicerecord,setter.bind(null,this.__service.state));
-    this.__service.state.set('ipaddress',this.get('name'));
-    console.log(this.get('name'),this.role,'registerRunning',runningservicerecord,this.pendingDefer ? 'with' : 'without', 'pendingDefer');
-    defer.resolve('ok');
-    if(this.pendingDefer){
-      this.pendingDefer.resolve('ok');
-      this.pendingDefer = null;
+  User.prototype.checkChallengeResponse = function(bidticket,challenge,response,defer){
+    //ping the ports (according to protocol, appropriately)
+    var successcount = 0, state = this.__service.state, ipaddress = response.ipaddress;
+    function successProc(portname,portval){
+      console.log(portname,'succeeded at',portval);
+      successcount++;
+      state.set(portname,portval);
+      return portval;
     }
-    this.satisfied = true;
+    q.allSettled([
+      testPort(ipaddress,response.tcpport).then(successProc.bind(null,'tcpport')),
+      testPort(ipaddress,response.httpport).then(successProc.bind(null,'httpport'))
+    ]).done(function(states){
+      console.log('allSettled',states);
+      if(successcount){
+        defer.resolve(null);
+        state.set('ipaddress',ipaddress);
+      }else{
+        defer.reject(new lib.Error('NO_PORTS_REACHABLE'));
+      }
+    });
   };
 
   return User;
