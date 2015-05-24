@@ -5,7 +5,7 @@ function createUser(execlib,ParentUser){
   function testPort(ipaddress,port){
     var d = q.defer();
     if(!(ipaddress&&port)){
-      d.reject('no can do');
+      d.reject('no can do, ipaddress: '+ipaddress+', port: '+port);
     }else{
       var c = new require('net').Socket();
       console.log('testing',ipaddress,':',port);
