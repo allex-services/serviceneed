@@ -35,9 +35,6 @@ function createUser(execlib,ParentUser){
   User.prototype.produceChallenge = function(offering,bidticket,defer){
     defer.resolve({timeout:60});
   };
-  function setter(u,item,itemname){
-    u.set(itemname,item);
-  }
   User.prototype.checkChallengeResponse = function(bidticket,challenge,response,defer){
     //ping the ports (according to protocol, appropriately)
     var successcount = 0, state = this.__service.state, ipaddress = response.ipaddress;
