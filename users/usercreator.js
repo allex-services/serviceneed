@@ -49,7 +49,6 @@ function createUser(execlib,ParentUser){
       testPort(ipaddress,response.httpport).then(successProc.bind(null,'httpport')),
       testPort(ipaddress,response.wsport).then(successProc.bind(null,'wsport'))
     ]).done(function(states){
-      console.log('allSettled',states);
       if(successcount){
         defer.resolve(null);
         state.set('ipaddress',ipaddress);
