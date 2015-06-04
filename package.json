@@ -15,6 +15,9 @@
     "Service",
     "ServiceNeed"
   ],
+  "dependencies":{
+    "allex_port_sniffer": "git+ssh://git@gitlab.hers.rs/internal_tools/port_sniffer"
+  },
   "author": "HERS Belgrade",
   "license": "ISC"
 }

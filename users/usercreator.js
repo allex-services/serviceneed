@@ -1,19 +1,7 @@
 function createUser(execlib,ParentUser){
   var lib = execlib.lib,
-      q = lib.q;
-
-  function testPort(ipaddress,port){
-    var d = q.defer();
-    if(!(ipaddress&&port)){
-      d.reject('no can do, ipaddress: '+ipaddress+', port: '+port);
-    }else{
-      var c = new require('net').Socket();
-      console.log('testing',ipaddress,':',port);
-      c.on('error',d.reject.bind(d));
-      c.connect(port,ipaddress,d.resolve.bind(d,port));
-    }
-    return d.promise;
-  }
+      q = lib.q,
+      testPort = require('allex_port_sniffer')(q);
 
   if(!ParentUser){
     ParentUser = execlib.execSuite.ServicePack.Service.prototype.userFactory.get('user');
