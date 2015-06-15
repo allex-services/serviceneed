@@ -1,4 +1,5 @@
 function createServicePack(execlib){
+  'use strict';
   var execSuite = execlib.execSuite,
       NeedServicePack = execSuite.registry.register('allex_needservice'),
       ParentServicePack = NeedServicePack;

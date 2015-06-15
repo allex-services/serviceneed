@@ -1,4 +1,5 @@
 function createUser(execlib,ParentUser){
+  'use strict';
   var lib = execlib.lib,
       q = lib.q,
       testPort = require('allex_port_sniffer')(q);
