@@ -23,10 +23,15 @@ function createUser(execlib,ParentUser){
   };
   User.prototype.produceChallenge = function(offering,bidticket,defer){
     var ipaddress = this.__service.state.get('ipaddress');
-    console.log('process offering',offering,'my ipaddress',ipaddress);
-    if(ipaddress && offering.ipaddress!==ipaddress){
+    if(!offering){
+      defer.resolve();
+      return;
+    }
+    if(ipaddress && offering.ipaddress !== ipaddress){
+      //console.log('ipaddress mismatch "'+offering.ipaddress+'"<> my ipaddress "'+ipaddress+'"', typeof offering.ipaddress, typeof ipaddress, offering.ipaddress != ipaddress);
       defer.resolve();
     }else{
+      //console.log('ipaddress passed', offering, 'my ipaddress', ipaddress);
       defer.resolve({timeout:this.__service.state.get('timeout')||60});
     }
   };
