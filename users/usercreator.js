@@ -2,7 +2,9 @@ function createUser(execlib,ParentUser){
   'use strict';
   var lib = execlib.lib,
       q = lib.q,
-      testPort = require('allex_port_sniffer')(q);
+      execSuite = execlib.execSuite,
+      testPort = execSuite.isPortFree;
+      //testPort = require('allex_port_sniffer')(q)
 
   if(!ParentUser){
     ParentUser = execlib.execSuite.ServicePack.Service.prototype.userFactory.get('user');
@@ -45,9 +47,9 @@ function createUser(execlib,ParentUser){
       return portval;
     }
     q.allSettled([
-      testPort(ipaddress,response.tcpport).then(successProc.bind(null,'tcpport')),
-      testPort(ipaddress,response.httpport).then(successProc.bind(null,'httpport')),
-      testPort(ipaddress,response.wsport).then(successProc.bind(null,'wsport'))
+      testPort(response.tcpport,ipaddress).then(successProc.bind(null,'tcpport')),
+      testPort(response.httpport,ipaddress).then(successProc.bind(null,'httpport')),
+      testPort(response.wsport,ipaddress).then(successProc.bind(null,'wsport'))
     ]).done(function(states){
       if(successcount){
         defer.resolve(null);

@@ -1,6 +1,6 @@
 {
   "name": "allex_serviceneedservice",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "ServiceNeedService",
   "main": "index.js",
   "scripts": {
@@ -15,9 +15,6 @@
     "Service",
     "ServiceNeed"
   ],
-  "dependencies":{
-    "allex_port_sniffer": "git+ssh://git@gitlab.hers.rs/internal_tools/port_sniffer"
-  },
   "author": "HERS Belgrade",
   "license": "ISC"
 }
