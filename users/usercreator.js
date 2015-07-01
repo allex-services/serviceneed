@@ -40,16 +40,18 @@ function createUser(execlib,ParentUser){
   User.prototype.checkChallengeResponse = function(bidticket,challenge,response,defer){
     //ping the ports (according to protocol, appropriately)
     var successcount = 0, state = this.__service.state, ipaddress = response.ipaddress;
-    function successProc(portname,portval){
-      console.log(portname,'succeeded at',portval);
-      successcount++;
-      state.set(portname,portval);
-      return portval;
+    function onTestIfFree(portname,portval,isfree){
+      if(!isfree){
+        successcount++;
+        //console.log(portname,portval,'ok');
+        state.set(portname,portval);
+      }
+      return isfree ? null : portval;
     }
     q.allSettled([
-      testPort(response.tcpport,ipaddress).then(successProc.bind(null,'tcpport')),
-      testPort(response.httpport,ipaddress).then(successProc.bind(null,'httpport')),
-      testPort(response.wsport,ipaddress).then(successProc.bind(null,'wsport'))
+      testPort(response.tcpport,ipaddress).then(onTestIfFree.bind(null,'tcpport',response.tcpport)),
+      testPort(response.httpport,ipaddress).then(onTestIfFree.bind(null,'httpport',response.httpport)),
+      testPort(response.wsport,ipaddress).then(onTestIfFree.bind(null,'wsport',response.wsport))
     ]).done(function(states){
       if(successcount){
         defer.resolve(null);
