@@ -34,7 +34,8 @@ function createUser(execlib,ParentUser){
       defer.resolve();
     }else{
       //console.log('ipaddress passed', offering, 'my ipaddress', ipaddress);
-      defer.resolve({timeout:this.__service.state.get('timeout')||60});
+      //defer.resolve({timeout:this.__service.state.get('timeout')||60});
+      defer.resolve(this.__service.state.get('timeout') ? {timeout:this.__service.state.get('timeout')} : true);
     }
   };
   User.prototype.checkChallengeResponse = function(bidticket,challenge,response,defer){
