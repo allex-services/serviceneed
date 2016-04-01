@@ -38,25 +38,22 @@ function createUser(execlib,ParentUser){
       defer.resolve(this.__service.state.get('timeout') ? {timeout:this.__service.state.get('timeout')} : true);
     }
   };
+  function onTestIfFree(successobj,portname,portval,isfree){
+    if(!isfree){
+      successobj.count++;
+    }
+    return isfree ? null : portval;
+  }
   User.prototype.checkChallengeResponse = function(bidticket,challenge,response,defer){
     //ping the ports (according to protocol, appropriately)
-    var successcount = 0, state = this.__service.state, ipaddress = response.ipaddress;
-    function onTestIfFree(portname,portval,isfree){
-      if(!isfree){
-        successcount++;
-        //console.log(portname,portval,'ok');
-        state.set(portname,portval);
-      }
-      return isfree ? null : portval;
-    }
+    var successobj = {count: 0}, state = this.__service.state, ipaddress = response.ipaddress;
     q.allSettled([
-      testPort(response.tcpport,ipaddress).then(onTestIfFree.bind(null,'tcpport',response.tcpport)),
-      testPort(response.httpport,ipaddress).then(onTestIfFree.bind(null,'httpport',response.httpport)),
-      testPort(response.wsport,ipaddress).then(onTestIfFree.bind(null,'wsport',response.wsport))
+      testPort(response.tcpport,ipaddress).then(onTestIfFree.bind(null,successobj,'tcpport',response.tcpport)),
+      testPort(response.httpport,ipaddress).then(onTestIfFree.bind(null,successobj,'httpport',response.httpport)),
+      testPort(response.wsport,ipaddress).then(onTestIfFree.bind(null,successobj,'wsport',response.wsport))
     ]).done(function(states){
-      if(successcount){
+      if(successobj.count){
         defer.resolve(null);
-        state.set('ipaddress',ipaddress);
       }else{
         defer.reject(new lib.Error('NO_PORTS_REACHABLE'));
       }
