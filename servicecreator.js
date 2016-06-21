@@ -1,6 +1,5 @@
-function createServiceNeedService(execlib,ParentServicePack){
+function createServiceNeedService(execlib,ParentService){
   'use strict';
-  var ParentService = ParentServicePack.Service;
 
   function factoryCreator(parentFactory){
     return {
