@@ -29,7 +29,7 @@ function createUser(execlib,ParentUser){
       defer.resolve();
       return;
     }
-    if(ipaddress && offering.ipaddress !== ipaddress){
+    if(ipaddress && offering.ipaddress && !lib.cidrMatch(offering.ipaddress, ipaddress)) {
       //console.log('ipaddress mismatch "'+offering.ipaddress+'"<> my ipaddress "'+ipaddress+'"', typeof offering.ipaddress, typeof ipaddress, offering.ipaddress != ipaddress);
       defer.resolve();
     }else{
