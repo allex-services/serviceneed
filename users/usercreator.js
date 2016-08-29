@@ -21,12 +21,15 @@ function createUser(execlib,ParentUser){
     ParentUser.prototype.__cleanUp.call(this);
   };
   User.prototype.canAcceptMoreBids = function(){
-    return this.__service.bids.count<1;
+    return this.__service ? this.__service.bids.count<1 : false;
   };
   User.prototype.produceChallenge = function(offering,bidticket,defer){
     var ipaddress = this.__service.state.get('ipaddress');
     if(!offering){
       defer.resolve();
+      offering = null;
+      bidticket = null;
+      defer = null;
       return;
     }
     if(ipaddress && offering.ipaddress && !lib.cidrMatch(offering.ipaddress, ipaddress)) {
@@ -37,6 +40,9 @@ function createUser(execlib,ParentUser){
       //defer.resolve({timeout:this.__service.state.get('timeout')||60});
       defer.resolve(this.__service.state.get('timeout') ? {timeout:this.__service.state.get('timeout')} : true);
     }
+    offering = null;
+    bidticket = null;
+    defer = null;
   };
   function onTestIfFree(successobj,portname,portval,isfree){
     if(!isfree){
@@ -57,6 +63,8 @@ function createUser(execlib,ParentUser){
       }else{
         defer.reject(new lib.Error('NO_PORTS_REACHABLE'));
       }
+      defer = null;
+      successobj = null;
     });
   };
 
