@@ -3,7 +3,7 @@ function createUser(execlib,ParentUser){
   var lib = execlib.lib,
       q = lib.q,
       execSuite = execlib.execSuite,
-      testPort = execSuite.isPortFree;
+      testPort = execSuite.checkPort;
       //testPort = require('allex_port_sniffer')(q)
 
   if(!ParentUser){
