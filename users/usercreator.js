@@ -21,7 +21,7 @@ function createUser(execlib,ParentUser){
     ParentUser.prototype.__cleanUp.call(this);
   };
   User.prototype.canAcceptMoreBids = function(){
-    return this.__service ? this.__service.bids.count<1 : false;
+    return (this.__service && this.__service.bids)? this.__service.bids.count<1 : false;
   };
   User.prototype.produceChallenge = function(offering,bidticket,defer){
     var ipaddress = this.__service.state.get('ipaddress');
