@@ -44,27 +44,22 @@ function createUser(execlib,ParentUser){
     bidticket = null;
     defer = null;
   };
-  function onTestIfFree(successobj,portname,portval,isfree){
-    if(!isfree){
-      successobj.count++;
-    }
-    return isfree ? null : portval;
-  }
   User.prototype.checkChallengeResponse = function(bidticket,challenge,response,defer){
     //ping the ports (according to protocol, appropriately)
-    var successobj = {count: 0}, state = this.__service.state, ipaddress = response.ipaddress;
-    q.allSettled([
-      testPort(response.tcpport,ipaddress).then(onTestIfFree.bind(null,successobj,'tcpport',response.tcpport)),
-      testPort(response.httpport,ipaddress).then(onTestIfFree.bind(null,successobj,'httpport',response.httpport)),
-      testPort(response.wsport,ipaddress).then(onTestIfFree.bind(null,successobj,'wsport',response.wsport))
-    ]).done(function(states){
-      if(successobj.count){
+    testPort([
+      {port: response.tcpport, ipaddress: response.ipaddress},
+      {port: response.httpport, ipaddress: response.ipaddress},
+      {port: response.wsport, ipaddress: response.ipaddress}
+    ]).done(function (validports) {
+      if (validports.length>0) {
         defer.resolve(null);
-      }else{
+      } else {
         defer.reject(new lib.Error('NO_PORTS_REACHABLE'));
       }
       defer = null;
-      successobj = null;
+    },function (reason) {
+      defer.reject(reason);
+      defer = null;
     });
   };
 
