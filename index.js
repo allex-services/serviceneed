@@ -3,7 +3,7 @@ function createServicePack(execlib){
 
   return {
     service: {
-      dependencies: ['allex_needservice']
+      dependencies: ['allex_needservice', 'allex:porthandlingjobs:lib']
     },
     sinkmap: {
       dependencies: ['allex_needservice']

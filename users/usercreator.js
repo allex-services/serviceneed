@@ -1,10 +1,7 @@
-function createUser(execlib,ParentUser){
+function createUser(execlib,ParentUser,portjobslib){
   'use strict';
   var lib = execlib.lib,
-      q = lib.q,
-      execSuite = execlib.execSuite,
-      testPort = execSuite.checkPort;
-      //testPort = require('allex_port_sniffer')(q)
+      q = lib.q;
 
   if(!ParentUser){
     ParentUser = execlib.execSuite.ServicePack.Service.prototype.userFactory.get('user');
@@ -21,7 +18,7 @@ function createUser(execlib,ParentUser){
     ParentUser.prototype.__cleanUp.call(this);
   };
   User.prototype.canAcceptMoreBids = function(){
-    return (this.__service && this.__service.bids)? this.__service.bids.count<1 : false;
+    return true;
   };
   User.prototype.produceChallenge = function(offering,bidticket,defer){
     var ipaddress = this.__service.state.get('ipaddress');
@@ -46,12 +43,12 @@ function createUser(execlib,ParentUser){
   };
   User.prototype.checkChallengeResponse = function(bidticket,challenge,response,defer){
     //ping the ports (according to protocol, appropriately)
-    testPort([
+    ((new portjobslib.AnyTaken([
       {port: response.tcpport, ipaddress: response.ipaddress},
       {port: response.httpport, ipaddress: response.ipaddress},
       {port: response.wsport, ipaddress: response.ipaddress}
-    ]).done(function (validports) {
-      if (validports.length>0) {
+    ])).go()).done(function (anytaken) {
+      if (anytaken) {
         defer.resolve(null);
       } else {
         defer.reject(new lib.Error('NO_PORTS_REACHABLE'));
