@@ -15,7 +15,7 @@ function createServiceNeedService(execlib,ParentService,portjobslib){
   ServiceNeedService.prototype.__cleanUp = function(){
     ParentService.prototype.__cleanUp.call(this);
   };
-  ServiceNeedService.prototype.needFields = ParentService.prototype.needFields.concat(['pid','ipaddress','tcpport','httpport','wsport']);
+  ServiceNeedService.prototype.needFields = ParentService.prototype.needFields.concat(['pid','ipaddress','tcpport', 'tcpoptions', 'httpport','httpoptions', 'wsport', 'wsoptions']);
   
   return ServiceNeedService;
 }
