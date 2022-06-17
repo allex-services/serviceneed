@@ -43,6 +43,10 @@ function createUser(execlib,ParentUser,portjobslib){
   };
   User.prototype.checkChallengeResponse = function(bidticket,challenge,response,defer){
     //ping the ports (according to protocol, appropriately)
+    if (!this.__service) {
+      defer.reject(new lib.Error('NEED_SERVICE_ALREADY_DESTROYED'));
+      return;
+    }
     ((new portjobslib.AnyTaken([
       {port: response.tcpport, ipaddress: response.ipaddress},
       {port: response.httpport, ipaddress: response.ipaddress},
